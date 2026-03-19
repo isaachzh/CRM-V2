@@ -4,1222 +4,240 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
 <title>Isaac CRM Pro</title>
+<!-- Firebase compat (non-module, loads normally) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <style>
 :root{
-  --bg:#080808;--card:#111111;--card2:#181818;--border:#252525;
-  --text:#f0f0f0;--muted:#606060;--radius:13px;--font:'Segoe UI',system-ui,sans-serif;
+  --bg:#080808;--card:#111;--card2:#1c1c1c;--border:#2a2a2a;
+  --text:#f0f0f0;--muted:#909090;--radius:13px;
+  --font:'Segoe UI',system-ui,sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px}
 button{font-family:var(--font);cursor:pointer;border:none;outline:none}
 input,textarea,select{font-family:var(--font);outline:none;border:none;color:var(--text)}
 a{text-decoration:none;color:inherit}
-
-/* ── SCREENS ── */
 .screen{position:fixed;inset:0;display:flex;flex-direction:column;transition:transform .28s cubic-bezier(.4,0,.2,1);will-change:transform}
 .screen.hidden{transform:translateX(100%);pointer-events:none}
 .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:13px}
 .scroll::-webkit-scrollbar{display:none}
-
-/* ── TOPBAR ── */
-.topbar{display:flex;align-items:center;gap:10px;padding:50px 15px 13px;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0}
+.topbar{display:flex;align-items:center;gap:10px;padding:50px 14px 13px;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0}
 .tb-title{font-size:1.05rem;font-weight:800;flex:1;letter-spacing:-.01em}
 .tb-sub{font-size:0.67rem;color:var(--muted);margin-top:1px}
-.back-btn{width:32px;height:32px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--border)}
-
-/* ── BUTTONS ── */
+.back-btn{width:32px;height:32px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--border);color:var(--text)}
 .btn{padding:9px 15px;border-radius:9px;font-weight:700;font-size:0.82rem;transition:opacity .12s}
 .btn:active{opacity:.7}
 .btn-w{background:#fff;color:#000}
 .btn-sm{padding:5px 11px;font-size:0.74rem;border-radius:8px}
 .btn-ghost{background:var(--card2);color:var(--text);border:1px solid var(--border)}
 .btn-danger{background:#7f1d1d;color:#fca5a5}
-.btn-full{width:100%;text-align:center;display:block;padding:12px}
-
-/* ── INPUTS ── */
+.btn-full{width:100%;text-align:center;display:block;padding:11px}
+.btn-green{background:#15803d;color:#dcfce7}
 .inp{background:var(--card2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;color:var(--text);font-size:0.82rem;width:100%}
 .inp::placeholder{color:var(--muted)}
-.inp:focus{border-color:#444}
-textarea.inp{resize:none;height:76px;line-height:1.55}
-
-/* ── CARDS ── */
+.inp:focus{border-color:#555}
+textarea.inp{resize:none;height:78px;line-height:1.55}
 .card{background:var(--card);border-radius:var(--radius);padding:13px;border:1px solid var(--border);margin-bottom:9px}
-.card-h{font-size:0.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:9px}
-
-/* ── STATUS COLOURS ── */
-.s-new{background:#2a2a2a;color:#888}
-.s-maybe{background:#0e7490;color:#e0f7fa}
-.s-interested{background:#6d28d9;color:#ede9fe}
-.s-askingboss{background:#b45309;color:#fef3c7}
-.s-seenprice{background:#a16207;color:#fef9c3}
-.s-2interested{background:#c2410c;color:#ffedd5}
-.s-3interested{background:#991b1b;color:#fee2e2}
-.s-maybeinfuture{background:#065f46;color:#d1fae5}
-.s-2seenprice{background:#92400e;color:#fef3c7}
-.s-3seenprice{background:#7f1d1d;color:#fecaca}
-.s-finalmessage{background:#1c1917;color:#a8a29e}
-.s-rejected{background:#1c1917;color:#555}
-.s-closed{background:#14532d;color:#bbf7d0}
-
+.card-h{font-size:0.64rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:9px}
+.s-new{background:#2a2a2a;color:#aaa}.s-maybe{background:#0e7490;color:#cff4fc}.s-alreadyhave{background:#1e3a8a;color:#bfdbfe}
+.s-interested{background:#6d28d9;color:#ede9fe}.s-seenprice{background:#a16207;color:#fef9c3}
+.s-2interested{background:#c2410c;color:#ffedd5}.s-3interested{background:#991b1b;color:#fee2e2}
+.s-maybeinfuture{background:#065f46;color:#d1fae5}.s-2seenprice{background:#92400e;color:#fef3c7}
+.s-3seenprice{background:#7f1d1d;color:#fecaca}.s-finalmessage{background:#292524;color:#a8a29e}
+.s-rejected{background:#78350f;color:#fed7aa}.s-closed{background:#14532d;color:#bbf7d0}
 .status-badge{font-size:0.6rem;font-weight:800;padding:3px 7px;border-radius:20px;white-space:nowrap;flex-shrink:0}
-.status-pill{padding:5px 11px;border-radius:20px;font-size:0.7rem;font-weight:700;cursor:pointer;opacity:.45;border:1.5px solid transparent;transition:all .12s}
-.status-pill.active{opacity:1;border-color:rgba(255,255,255,.25)}
-
-/* ── NAV ── */
+.status-pill{padding:5px 11px;border-radius:20px;font-size:0.7rem;font-weight:700;cursor:pointer;opacity:.4;border:1.5px solid transparent;transition:all .12s;margin-bottom:5px}
+.status-pill.active{opacity:1;border-color:rgba(255,255,255,.3)}
 .nav{display:flex;border-top:1px solid var(--border);background:var(--bg);flex-shrink:0}
 .nav-item{flex:1;padding:10px 0 8px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;color:var(--muted);font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;transition:color .12s}
 .nav-item.active{color:#fff}
 .nav-item svg{width:18px;height:18px}
 
-/* ── BIZ CARDS ── */
-.biz-card{background:var(--card);border-radius:var(--radius);padding:11px 13px;border:1px solid var(--border);margin-bottom:7px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .1s;user-select:none;-webkit-user-select:none;position:relative}
-.biz-card:active{background:var(--card2)}
-.biz-card.due-overdue{border-left:3px solid #dc2626}
-.biz-card.due-today{border-left:3px solid #ea580c}
-.biz-card.due-soon{border-left:3px solid #ca8a04}
-.biz-avatar{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.88rem;flex-shrink:0;color:#000}
-.biz-info{flex:1;min-width:0}
-.biz-name{font-weight:700;font-size:0.87rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.biz-meta{font-size:0.67rem;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
-.prog-bar{height:2px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:6px}
-.prog-fill{height:100%;background:#fff;border-radius:2px}
-.due-chip{font-size:0.58rem;font-weight:800;padding:1px 5px;border-radius:8px;flex-shrink:0}
-.due-chip.due-overdue{background:rgba(220,38,38,.18);color:#f87171}
-.due-chip.due-today{background:rgba(234,88,12,.18);color:#fb923c}
-.due-chip.due-soon{background:rgba(202,138,4,.18);color:#facc15}
+/* ── PIPELINE ROW ── */
+.pipe-row{display:flex;gap:9px;margin-bottom:10px}
+.pipe-main{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:13px;flex:6}
+.pipe-credit{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:11px;flex:4;cursor:pointer;transition:border-color .15s}
+.pipe-credit:active{opacity:.8}
+.pipe-credit.c-orange{border-color:#ea580c}
+.pipe-credit.c-red{border-color:#dc2626}
+.pipe-amt{font-size:1.6rem;font-weight:900;line-height:1.1}
+.pipe-lbl{font-size:0.6rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.pipe-sub{font-size:0.62rem;color:var(--muted);margin-top:3px}
+.credit-val{font-size:1.15rem;font-weight:900;line-height:1.2}
+.credit-reset{font-size:0.59rem;color:var(--muted);margin-top:2px;line-height:1.4}
 
-/* ── STATS ── */
+/* ── DUE/OVERDUE ROW ── */
+.due-row{display:flex;gap:9px;margin-bottom:10px}
+.due-stat{flex:1;border-radius:var(--radius);padding:12px;border:1px solid var(--border);cursor:pointer;transition:all .15s}
+.due-stat:active{opacity:.8}
+.due-stat-n{font-size:1.5rem;font-weight:900;line-height:1}
+.due-stat-l{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+.ds-today{background:rgba(255,0,0,.08);border-color:rgba(255,0,0,.3)}
+.ds-today .due-stat-n{color:#ff4444}
+.ds-today .due-stat-l{color:rgba(255,68,68,.7)}
+.ds-overdue{background:rgba(254,0,255,.07);border-color:rgba(254,0,255,.3)}
+.ds-overdue .due-stat-n{color:#fe00ff}
+.ds-overdue .due-stat-l{color:rgba(254,0,255,.7)}
+
+/* ── STATS GRID ── */
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
 .stat-c{background:var(--card);border-radius:var(--radius);padding:12px;border:1px solid var(--border)}
 .stat-n{font-size:1.65rem;font-weight:900;line-height:1}
 .stat-l{font-size:0.62rem;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.05em}
 
-/* ── PIPELINE ── */
-.pipe-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:13px;margin-bottom:10px}
-.pipe-amt{font-size:1.9rem;font-weight:900}
+/* ── BIZ CARDS ── */
+.biz-card{background:var(--card);border-radius:var(--radius);padding:11px 13px;border:1px solid var(--border);margin-bottom:7px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:filter .1s;user-select:none;-webkit-user-select:none;position:relative}
+.biz-card:active{filter:brightness(1.2)}
+.biz-avatar{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.88rem;flex-shrink:0;color:#000}
+.biz-info{flex:1;min-width:0}
+.biz-name{font-weight:700;font-size:0.87rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.biz-meta{font-size:0.67rem;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.prog-bar{height:2px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden;margin-top:6px}
+.prog-fill{height:100%;background:rgba(255,255,255,.6);border-radius:2px;transition:width .4s}
+.mini-cap{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:20px;font-size:0.58rem;font-weight:800;flex-shrink:0;white-space:nowrap;color:#000}
+.due-chip{font-size:0.58rem;font-weight:800;padding:2px 6px;border-radius:8px;background:rgba(255,255,255,.15);color:#fff;flex-shrink:0}
 
 /* ── BANNERS ── */
 .banner{border-radius:10px;padding:9px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
 .banner-red{background:rgba(185,28,28,.1);border:1px solid rgba(185,28,28,.25)}
 .banner-orange{background:rgba(234,88,12,.08);border:1px solid rgba(234,88,12,.22)}
+.banner-purple{background:rgba(168,0,255,.08);border:1px solid rgba(168,0,255,.25)}
 .banner p{font-size:0.74rem;font-weight:700}
 .banner-red p{color:#f87171}
 .banner-orange p{color:#fb923c}
+.banner-purple p{color:#d946ef}
 .pdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;animation:pls 1.4s infinite}
-.pdot-red{background:#f87171}
-.pdot-orange{background:#fb923c}
 @keyframes pls{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(1.5)}}
-
-/* ── SEARCH ── */
 .srch-wrap{position:relative;margin-bottom:8px}
 .srch-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
 .srch-inp{background:var(--card2);border:1px solid var(--border);border-radius:9px;padding:8px 12px 8px 32px;color:var(--text);font-size:0.82rem;width:100%}
 .srch-inp::placeholder{color:var(--muted)}
-
-/* ── FILTER TABS ── */
 .ftabs{display:flex;gap:5px;overflow-x:auto;margin-bottom:9px;padding-bottom:2px;-webkit-overflow-scrolling:touch}
 .ftabs::-webkit-scrollbar{display:none}
-.ftab{padding:4px 11px;border-radius:20px;font-size:0.7rem;font-weight:700;white-space:nowrap;background:var(--card2);color:var(--muted);cursor:pointer;flex-shrink:0;border:1.5px solid transparent;transition:all .12s}
-.ftab.active{background:#fff;color:#000}
-
-/* ── DETAIL HEADER ── */
-.det-hdr{padding:48px 15px 13px;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0}
+.ftab{padding:4px 10px;border-radius:20px;font-size:0.68rem;font-weight:700;white-space:nowrap;cursor:pointer;flex-shrink:0;border:1.5px solid transparent;transition:all .15s;display:flex;align-items:center;gap:4px}
+.det-hdr{padding:48px 14px 13px;background:var(--bg);border-bottom:1px solid var(--border);flex-shrink:0}
 .det-name{font-size:1.1rem;font-weight:800;margin-bottom:2px}
 .act-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}
-.act-btn{padding:11px;border-radius:10px;font-weight:700;font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:6px}
-.act-call{background:#16a34a;color:#000}
-.act-wa{background:#15803d;color:#dcfce7}
-
-/* ── TIMELINE ── */
+.act-btn{padding:12px;border-radius:10px;font-weight:700;font-size:0.87rem;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer}
+.act-wa-msg{background:#1d4ed8;color:#bfdbfe;border:none}
+.act-wa-call{background:#15803d;color:#dcfce7;border:none}
 .tl{display:flex;flex-direction:column;gap:6px}
 .tl-item{display:flex;gap:8px;align-items:flex-start}
-.tl-dot{width:5px;height:5px;border-radius:50%;background:var(--border);flex-shrink:0;margin-top:5px}
-.tl-txt{font-size:0.76rem;color:var(--muted);line-height:1.5;flex:1;word-break:break-word}
-.tl-time{font-size:0.63rem;color:#333;flex-shrink:0}
-
-/* ── FLOAT BUTTONS ── */
-.flt{position:fixed;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:90;transition:transform .12s;box-shadow:0 2px 12px rgba(0,0,0,.7)}
+.tl-dot{width:5px;height:5px;border-radius:50%;background:#444;flex-shrink:0;margin-top:5px}
+.tl-txt{font-size:0.77rem;color:#b0b0b0;line-height:1.5;flex:1;word-break:break-word}
+.tl-time{font-size:0.63rem;color:#555;flex-shrink:0}
+.flt{position:fixed;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:90;box-shadow:0 2px 14px rgba(0,0,0,.7);transition:transform .12s}
 .flt:active{transform:scale(.9)}
 .flt-ai{bottom:82px;right:15px;background:#fff}
 .flt-tmpl{bottom:26px;right:15px;background:var(--card2);border:1px solid var(--border)}
-
-/* ── SHEETS ── */
-.sbd{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:200;opacity:0;pointer-events:none;transition:opacity .22s}
+.sbd{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;opacity:0;pointer-events:none;transition:opacity .22s}
 .sbd.open{opacity:1;pointer-events:all}
-.sheet{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-radius:20px 20px 0 0;z-index:201;transform:translateY(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);max-height:90vh;display:flex;flex-direction:column}
+.sheet{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-radius:20px 20px 0 0;z-index:201;transform:translateY(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);max-height:92vh;display:flex;flex-direction:column}
 .sheet.open{transform:translateY(0)}
 .sh-handle{width:32px;height:3px;border-radius:2px;background:var(--border);margin:9px auto;flex-shrink:0}
-.sh-hdr{padding:2px 15px 11px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sh-hdr{padding:2px 14px 11px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sh-hdr-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
 .sh-hdr h3{font-size:0.92rem;font-weight:800}
 .sh-hdr p{font-size:0.7rem;color:var(--muted);margin-top:2px}
 .sh-scroll{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:13px;flex:1}
 .sh-scroll::-webkit-scrollbar{display:none}
-
-/* ── SIT TABS ── */
 .sit-tabs{display:flex;gap:4px;overflow-x:auto;margin-bottom:11px;padding-bottom:3px;-webkit-overflow-scrolling:touch}
 .sit-tabs::-webkit-scrollbar{display:none}
 .sit-tab{padding:5px 10px;border-radius:18px;font-size:0.68rem;font-weight:700;white-space:nowrap;background:var(--card2);color:var(--muted);cursor:pointer;flex-shrink:0;border:1px solid transparent;transition:all .12s}
 .sit-tab.active{background:#fff;color:#000}
-.tmpl-block{margin-bottom:13px}
-.tmpl-lang{font-size:0.62rem;font-weight:800;padding:2px 6px;border-radius:7px;margin-bottom:5px;display:inline-block}
+.tmpl-block{margin-bottom:13px;border:1px solid var(--border);border-radius:11px;overflow:hidden}
+.tmpl-lang-bar{display:flex;align-items:center;justify-content:space-between;padding:7px 11px;background:var(--card2);border-bottom:1px solid var(--border)}
+.lang-badge{font-size:0.62rem;font-weight:800;padding:2px 7px;border-radius:7px}
 .lang-en{background:rgba(0,180,216,.12);color:#00b4d8}
-.lang-bm{background:rgba(22,163,74,.12);color:#4ade80}
-.tmpl-msg{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:0.77rem;line-height:1.65;cursor:pointer;white-space:pre-wrap;word-break:break-word;transition:border-color .12s}
-.tmpl-msg:active{border-color:#fff}
-
-/* ── OUTCOME BTNS ── */
+.lang-bm{background:rgba(74,222,128,.1);color:#4ade80}
+.tmpl-msg{padding:10px 12px;font-size:0.77rem;line-height:1.68;cursor:pointer;white-space:pre-wrap;word-break:break-word;color:var(--text)}
+.tmpl-msg:active{background:var(--card2)}
+.tmpl-textarea{padding:10px 12px;font-size:0.77rem;line-height:1.68;background:var(--card2);color:var(--text);width:100%;resize:none;height:180px;border:none}
+.tmpl-save-row{display:flex;gap:6px;padding:7px 11px;background:var(--card2);border-top:1px solid var(--border)}
+.edited-badge{font-size:0.58rem;font-weight:800;padding:1px 5px;border-radius:6px;background:rgba(34,197,94,.15);color:#22c55e}
 .out-btn{display:block;width:100%;text-align:left;background:var(--card2);border:1.5px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer;transition:all .12s}
 .out-btn:active{transform:scale(.98)}
 .out-icon{font-size:1.2rem;margin-bottom:2px}
 .out-lbl{font-weight:700;font-size:0.84rem;margin-bottom:1px;color:var(--text)}
 .out-desc{font-size:0.68rem;color:var(--muted)}
-.ob-green{border-color:rgba(22,163,74,.35);background:rgba(22,163,74,.04)}
-.ob-blue{border-color:rgba(0,180,216,.35);background:rgba(0,180,216,.04)}
-.ob-orange{border-color:rgba(234,88,12,.35);background:rgba(234,88,12,.04)}
-.ob-red{border-color:rgba(185,28,28,.35);background:rgba(185,28,28,.04)}
-.ob-purple{border-color:rgba(124,58,237,.35);background:rgba(124,58,237,.04)}
-.ob-yellow{border-color:rgba(202,138,4,.35);background:rgba(202,138,4,.04)}
-.ob-gray{border-color:rgba(100,100,100,.3);background:rgba(100,100,100,.03)}
-
-/* ── DUE TIMER ── */
+.ob-green{border-color:rgba(22,163,74,.4);background:rgba(22,163,74,.05)}
+.ob-blue{border-color:rgba(30,58,138,.5);background:rgba(30,58,138,.07)}
+.ob-orange{border-color:rgba(234,88,12,.4);background:rgba(234,88,12,.05)}
+.ob-red{border-color:rgba(185,28,28,.4);background:rgba(185,28,28,.05)}
+.ob-purple{border-color:rgba(109,40,217,.4);background:rgba(109,40,217,.05)}
+.ob-yellow{border-color:rgba(202,138,4,.4);background:rgba(202,138,4,.05)}
+.ob-gray{border-color:rgba(100,100,100,.3);background:rgba(100,100,100,.04)}
 .due-box{border-radius:10px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;border:1px solid var(--border);background:var(--card2)}
-.due-box.due-overdue{border-color:rgba(220,38,38,.4);background:rgba(220,38,38,.06)}
-.due-box.due-today{border-color:rgba(234,88,12,.4);background:rgba(234,88,12,.06)}
-.due-box.due-soon{border-color:rgba(202,138,4,.4);background:rgba(202,138,4,.06)}
-
-/* ── AI CHAT ── */
+.due-box.overdue{border-color:rgba(254,0,255,.5);background:rgba(254,0,255,.07)}
+.due-box.today{border-color:rgba(255,0,0,.5);background:rgba(255,0,0,.07)}
+.due-box.soon{border-color:rgba(202,138,4,.5);background:rgba(202,138,4,.06)}
 .chat-ov{position:fixed;inset:0;z-index:400;background:var(--bg);display:flex;flex-direction:column}
 .chat-ov.hidden{display:none}
-.chat-hdr{padding:50px 15px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.chat-hdr{padding:50px 14px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .chat-msgs{flex:1;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:9px}
 .chat-msgs::-webkit-scrollbar{display:none}
-.cmsg{max-width:83%;padding:8px 12px;border-radius:13px;font-size:0.79rem;line-height:1.58;white-space:pre-wrap;word-break:break-word}
+.cmsg{max-width:84%;padding:8px 12px;border-radius:13px;font-size:0.79rem;line-height:1.6;white-space:pre-wrap;word-break:break-word}
 .cmsg-u{background:#fff;color:#000;align-self:flex-end;border-bottom-right-radius:3px}
 .cmsg-a{background:var(--card2);color:var(--text);align-self:flex-start;border-bottom-left-radius:3px;border:1px solid var(--border)}
-.typing{display:flex;gap:3px;align-items:center;padding:2px 0}
+.typing{display:flex;gap:3px;align-items:center;padding:3px 0}
 .tdot{width:5px;height:5px;border-radius:50%;background:var(--muted);animation:td 1.2s infinite}
-.tdot:nth-child(2){animation-delay:.2s}
-.tdot:nth-child(3){animation-delay:.4s}
+.tdot:nth-child(2){animation-delay:.2s}.tdot:nth-child(3){animation-delay:.4s}
 @keyframes td{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
 .chat-bar{padding:10px 13px;border-top:1px solid var(--border);display:flex;gap:7px;background:var(--bg);flex-shrink:0}
 .chat-inp{background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:8px 13px;color:var(--text);font-size:0.81rem;flex:1}
 .chat-inp::placeholder{color:var(--muted)}
 .chat-send{width:36px;height:36px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.chat-suggestion{display:flex;gap:5px;overflow-x:auto;padding:0 13px 9px;flex-shrink:0}
-.chat-suggestion::-webkit-scrollbar{display:none}
+.sug-row{display:flex;gap:5px;overflow-x:auto;padding:0 13px 8px;-webkit-overflow-scrolling:touch;flex-shrink:0}
+.sug-row::-webkit-scrollbar{display:none}
 .sug-chip{padding:5px 10px;border-radius:18px;font-size:0.68rem;font-weight:700;white-space:nowrap;background:var(--card2);color:var(--muted);cursor:pointer;flex-shrink:0;border:1px solid var(--border)}
-
-/* ── PRICING SHEET ── */
 .price-norm{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:11px}
 .price-ni{background:var(--card2);border-radius:8px;padding:9px 11px;border:1px solid var(--border)}
 .price-promo{background:#fff;color:#000;border-radius:11px;padding:13px}
 .price-big{font-size:1.75rem;font-weight:900}
 .price-mid{font-size:1.1rem;font-weight:800}
 .stk{text-decoration:line-through;color:#888;font-size:0.82rem}
-
-/* ── TRACKER ── */
-.wk-chart{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.wk-chart{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:4px}
 .wk-col{text-align:center}
 .wk-lbl{font-size:0.57rem;color:var(--muted);margin-bottom:4px}
-.wk-bar{height:40px;background:var(--card2);border-radius:4px;overflow:hidden;display:flex;align-items:flex-end}
+.wk-bar{height:44px;background:var(--card2);border-radius:4px;overflow:hidden;display:flex;align-items:flex-end}
 .wk-fill{width:100%;border-radius:4px;min-height:3px}
-.wk-num{font-size:0.6rem;font-weight:700;margin-top:3px}
+.wk-num{font-size:0.6rem;font-weight:700;margin-top:3px;color:var(--muted)}
+.tracker-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:10px}
+.tracker-num{font-size:1.3rem;font-weight:900;cursor:pointer;min-width:32px;text-align:center}
+.reorder-item{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--card2);border-radius:10px;margin-bottom:6px;border:1px solid var(--border)}
+.reorder-arrows{display:flex;flex-direction:column;gap:2px}
+.arrow-btn{width:22px;height:22px;border-radius:6px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:0.7rem;cursor:pointer;transition:all .12s}
+.arrow-btn:active{background:var(--border)}
+.op-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card2);border-radius:10px;margin-bottom:6px;border:1px solid var(--border)}
+.op-label{font-size:0.8rem;font-weight:700}
+.op-sub{font-size:0.65rem;color:var(--muted);margin-top:1px}
+input[type=range]{-webkit-appearance:none;width:90px;height:4px;border-radius:2px;background:var(--border);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;cursor:pointer}
+.color-row{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--card2);border-radius:10px;margin-bottom:5px;border:1px solid var(--border)}
+.color-swatch{width:28px;height:28px;border-radius:7px;border:2px solid var(--border);cursor:pointer;flex-shrink:0}
+.acc-card{background:var(--card2);border-radius:11px;padding:11px 13px;border:1px solid var(--border);margin-bottom:8px}
+.acc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.acc-name{font-weight:700;font-size:0.87rem}
+.acc-credits{font-size:1.3rem;font-weight:900}
+.acc-meta{font-size:0.65rem;color:var(--muted);margin-top:2px}
+.acc-actions{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+.acc-selected{border-color:#22c55e!important;box-shadow:0 0 0 1px #22c55e33}
+.netlify-popup{position:fixed;inset:0;background:rgba(0,0,0,.87);z-index:500;opacity:0;pointer-events:none;transition:opacity .18s;display:flex;align-items:flex-end;justify-content:center;padding:20px}
+.netlify-popup.open{opacity:1;pointer-events:all}
+.netlify-inner{background:var(--card);width:100%;max-width:380px;border:1px solid var(--border);max-height:80vh;display:flex;flex-direction:column;border-radius:20px}
+.netlify-hdr{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.netlify-hdr h3{font-size:0.92rem;font-weight:800}
+.netlify-body{overflow-y:auto;padding:13px;flex:1}
 
-/* ── MODAL ── */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;opacity:0;pointer-events:none;transition:opacity .18s;display:flex;align-items:center;justify-content:center;padding:20px}
-.modal-bg.open{opacity:1;pointer-events:all}
-.modal{background:var(--card);border-radius:var(--radius);padding:19px;width:100%;max-width:330px;border:1px solid var(--border)}
-.modal h3{font-size:0.92rem;font-weight:800;margin-bottom:5px}
-.modal p{font-size:0.78rem;color:var(--muted);margin-bottom:13px;line-height:1.5}
-.modal-row{display:flex;gap:7px}
-.modal-row button{flex:1}
-
-/* ── SYNC DOT ── */
-.sdot{width:6px;height:6px;border-radius:50%;background:#2a2a2a;flex-shrink:0;transition:background .3s}
+/* ── HOURS PASTE AREA ── */
+.hours-paste{background:var(--card2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;color:var(--text);font-size:0.78rem;width:100%;height:120px;resize:none;line-height:1.6}
+.hours-paste::placeholder{color:var(--muted)}
+.hours-preview{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+.hours-day-row{display:flex;align-items:center;gap:7px;font-size:0.72rem}
+.hours-day-lbl{font-weight:700;width:28px;flex-shrink:0;color:var(--muted)}
+.hours-day-val{color:var(--text)}
+.sdot{width:7px;height:7px;border-radius:50%;background:#2a2a2a;flex-shrink:0;transition:background .3s}
 .sdot.synced{background:#22c55e}
 .sdot.syncing{background:#ea580c;animation:pls 1s infinite}
-.sdot.error{background:#dc2626}
-
-/* ── TOAST ── */
-.toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:#fff;color:#000;padding:8px 16px;border-radius:20px;font-size:0.77rem;font-weight:700;z-index:9999;opacity:0;transition:opacity .18s;pointer-events:none;white-space:nowrap;max-width:85vw;text-align:center}
-.toast.show{opacity:1}
-
-.empty{text-align:center;padding:40px 20px;color:var(--muted)}
-.empty p{font-size:0.8rem}
-.row{display:flex;gap:7px;margin-bottom:7px}
-.slbl{font-size:0.63rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;margin-top:2px}
-</style>
-</head>
-<body>
-
-<!-- ════════════════════════════════════════════════════════════════════
-  HOME SCREEN
-════════════════════════════════════════════════════════════════════ -->
-<div class="screen" id="screen-home">
-  <div class="topbar">
-    <div style="flex:1"><div class="tb-title">Isaac CRM Pro</div><div class="tb-sub" id="dash-sub">Loading…</div></div>
-    <div class="sdot" id="sdot"></div>
-    <button class="btn btn-sm btn-w" onclick="showScreen('screen-add')">+ Add</button>
-  </div>
-  <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
-    <div class="scroll" id="home-scroll">
-      <div id="banner-overdue" style="display:none" class="banner banner-red"><div class="pdot pdot-red"></div><p id="banner-overdue-txt"></p></div>
-      <div id="banner-today" style="display:none" class="banner banner-orange"><div class="pdot pdot-orange"></div><p id="banner-today-txt"></p></div>
-      <div class="pipe-card">
-        <div style="font-size:0.63rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px">💰 Pipeline Value</div>
-        <div class="pipe-amt" id="pipe-amt">RM0</div>
-        <div style="font-size:0.65rem;color:var(--muted);margin-top:3px" id="pipe-sub"></div>
-      </div>
-      <div class="stats-grid" id="stats-grid"></div>
-      <div class="srch-wrap">
-        <svg class="srch-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input class="srch-inp" id="srch" placeholder="Search businesses…" oninput="renderHome()"/>
-      </div>
-      <div class="ftabs" id="ftabs"></div>
-      <div id="biz-list"></div>
-      <div style="height:16px"></div>
-    </div>
-    <div id="tracker-scroll" style="display:none;flex:1;overflow-y:auto;padding:13px">
-      <div class="card" id="wk-card"></div>
-      <div class="slbl" style="margin-top:4px">All-Time Call Log</div>
-      <div id="tracker-log"></div>
-      <div style="height:16px"></div>
-    </div>
-  </div>
-  <div class="nav">
-    <div class="nav-item active" id="ni-home" onclick="switchTab('home')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home
-    </div>
-    <div class="nav-item" id="ni-tracker" onclick="switchTab('tracker')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Tracker
-    </div>
-    <div class="nav-item" onclick="showScreen('screen-add')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Add
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════════════════════════════════
-  ADD SCREEN
-════════════════════════════════════════════════════════════════════ -->
-<div class="screen hidden" id="screen-add">
-  <div class="topbar">
-    <button class="back-btn" onclick="showScreen('screen-home')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
-    <div><div class="tb-title">Add Businesses</div><div class="tb-sub">Google Sheet paste or manual</div></div>
-  </div>
-  <div class="scroll">
-    <div class="card">
-      <div class="card-h">Paste from Google Sheet</div>
-      <p style="font-size:0.73rem;color:var(--muted);margin-bottom:9px;line-height:1.5">Select rows in Google Sheets → Copy → Paste here. TRUE/FALSE, row numbers and empty cells are ignored automatically.</p>
-      <textarea class="inp" id="bulk-paste" placeholder="Paste rows here…&#10;TRUE  Klinik ABC  0123456789&#10;FALSE  Dr Tan Dental  011-2345678"></textarea>
-      <button class="btn btn-w btn-full" style="margin-top:8px" onclick="bulkAdd()">Import All</button>
-    </div>
-    <div class="card">
-      <div class="card-h">Add Single Business</div>
-      <div class="row"><input class="inp" id="add-name" placeholder="Business name" style="flex:2"/></div>
-      <div class="row"><input class="inp" id="add-phone" placeholder="Phone / WhatsApp number" type="tel"/><button class="btn btn-w btn-sm" style="flex-shrink:0" onclick="addSingle()">Add</button></div>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════════════════════════════════
-  DETAIL SCREEN
-════════════════════════════════════════════════════════════════════ -->
-<div class="screen hidden" id="screen-detail">
-  <div class="det-hdr">
-    <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
-      <button class="back-btn" onclick="showScreen('screen-home')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <div style="flex:1"><div class="det-name" id="det-name"></div><div style="font-size:0.76rem;color:var(--muted)" id="det-phone"></div></div>
-      <button class="btn btn-sm btn-ghost" onclick="openEdit()">Edit</button>
-      <button class="btn btn-sm btn-danger" onclick="confirmDelete()">Del</button>
-    </div>
-    <div class="act-row">
-      <a class="act-btn act-call" id="det-call-btn" onclick="handleCallTap()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.1 2.18 2 2 0 012.18 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.18 6.18l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>Call
-      </a>
-      <a class="act-btn act-wa" id="det-wa-btn">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp
-      </a>
-    </div>
-  </div>
-  <div class="scroll" id="det-scroll">
-    <div class="card"><div class="card-h">⚡ Post-Call Update</div><button class="btn btn-w btn-full" onclick="openWorkflow()">What happened on this call?</button></div>
-    <div id="det-due-box"></div>
-    <div class="card"><div class="card-h">Status</div><div style="display:flex;flex-wrap:wrap;gap:5px" id="det-status-row"></div></div>
-    <div class="card">
-      <div class="card-h">Quick Notes</div>
-      <textarea class="inp" id="det-notes" placeholder="e.g. Spoke to receptionist, boss is Ahmad…"></textarea>
-      <button class="btn btn-ghost btn-full" style="margin-top:7px" onclick="saveNotes()">Save Note</button>
-    </div>
-    <div class="card"><div class="card-h">Activity Log</div><div class="tl" id="det-tl"></div></div>
-    <div style="height:100px"></div>
-  </div>
-  <button class="flt flt-ai" onclick="openChat()">
-    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-  </button>
-  <button class="flt flt-tmpl" onclick="openSheet()">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-  </button>
-</div>
-
-<!-- ════════════════════════════════════════════════════════════════════
-  EDIT SCREEN
-════════════════════════════════════════════════════════════════════ -->
-<div class="screen hidden" id="screen-edit">
-  <div class="topbar">
-    <button class="back-btn" onclick="showScreen('screen-detail')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
-    <div><div class="tb-title">Edit Business</div></div>
-  </div>
-  <div class="scroll">
-    <div class="card">
-      <div class="card-h">Business Details</div>
-      <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:11px">
-        <input class="inp" id="edit-name" placeholder="Business name"/>
-        <input class="inp" id="edit-phone" placeholder="Phone number" type="tel"/>
-      </div>
-      <div class="card-h">Follow-up Due Date & Time</div>
-      <input class="inp" id="edit-due" type="datetime-local" style="margin-bottom:11px"/>
-      <div class="card-h">Status Override</div>
-      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px" id="edit-status-row"></div>
-      <button class="btn btn-w btn-full" onclick="saveEdit()">Save Changes</button>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════════════════════════════════
-  POST-CALL WORKFLOW SHEET
-════════════════════════════════════════════════════════════════════ -->
-<div class="sbd" id="wf-bd" onclick="closeWorkflow()"></div>
-<div class="sheet" id="wf-sheet">
-  <div class="sh-handle"></div>
-  <div class="sh-hdr"><h3>📞 How did the call go?</h3><p id="wf-bname">Select an outcome</p></div>
-  <div class="sh-scroll" id="wf-content"></div>
-</div>
-
-<!-- ════════════════════════════════════════════════════════════════════
-  TEMPLATE SHEET
-════════════════════════════════════════════════════════════════════ -->
-<div class="sbd" id="tmpl-bd" onclick="closeSheet()"></div>
-<div class="sheet" id="tmpl-sheet">
-  <div class="sh-handle"></div>
-  <div class="sh-hdr"><h3>📋 Message Templates</h3><p id="tmpl-ctx">Tap to copy instantly</p></div>
-  <div class="sh-scroll">
-    <div class="sit-tabs" id="sit-tabs"></div>
-    <div id="tmpl-body"></div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════════════════════════════════
-  QUICK STATUS SHEET (long press)
-════════════════════════════════════════════════════════════════════ -->
-<div class="sbd" id="qs-bd" onclick="closeQS()"></div>
-<div class="sheet" id="qs-sheet">
-  <div class="sh-handle"></div>
-  <div class="sh-hdr"><h3 id="qs-bname">Quick Status</h3><p>Long-press shortcut — tap status to apply</p></div>
-  <div class="sh-scroll"><div style="display:flex;flex-wrap:wrap;gap:6px" id="qs-pills"></div></div>
-</div>
-
-<!-- ════════════════════════════════════════════════════════════════════
-  PRICING SHEET
-════════════════════════════════════════════════════════════════════ -->
-<div class="sbd" id="price-bd" onclick="closePricing()"></div>
-<div class="sheet" id="price-sheet">
-  <div class="sh-handle"></div>
-  <div class="sh-hdr"><h3>💰 Pricing Card</h3><p>Ramadan Special Offer — tap to copy pitch</p></div>
-  <div class="sh-scroll">
-    <div style="text-align:center;margin-bottom:13px">
-      <div style="font-size:0.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">🌙 Ramadan Special Offer</div>
-      <div style="font-size:1.05rem;font-weight:800">Professional Website Package</div>
-      <div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Everything your business needs to go online</div>
-    </div>
-    <div style="font-size:0.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:5px">Normal Pricing</div>
-    <div class="price-norm">
-      <div class="price-ni"><div style="font-size:0.62rem;color:var(--muted)">One-Time Setup</div><div class="stk">RM 3,199</div></div>
-      <div class="price-ni"><div style="font-size:0.62rem;color:var(--muted)">Monthly</div><div class="stk">RM 399/mo</div></div>
-    </div>
-    <div class="price-promo">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <div style="font-size:0.7rem;font-weight:800;color:#333">RAMADAN PRICE</div>
-        <div style="font-size:0.58rem;background:#000;color:#fff;padding:2px 7px;border-radius:8px;font-weight:700">Save RM500+</div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <div><div style="font-size:0.62rem;color:#555">One-Time Setup</div><div class="price-big">RM 2,799</div><div style="font-size:0.58rem;color:#555">one-time payment</div></div>
-        <div><div style="font-size:0.62rem;color:#555">Monthly</div><div class="price-mid">RM 349</div><div style="font-size:0.58rem;color:#555">per month</div></div>
-      </div>
-    </div>
-    <div style="margin:11px 0 5px;font-size:0.68rem;color:var(--muted);font-weight:700">What's Included:</div>
-    <div style="font-size:0.72rem;color:var(--muted);line-height:2">✅ Professional website (mobile-friendly)<br>✅ Google Maps integration with marker<br>✅ WhatsApp chat button<br>✅ Services, testimonials & contact<br>✅ Appointment booking form<br>✅ Monthly updates & tech support</div>
-    <div style="height:10px"></div>
-    <button class="btn btn-w btn-full" onclick="copyPriceEN()">📋 Copy EN Price Message</button>
-    <button class="btn btn-ghost btn-full" style="margin-top:7px" onclick="copyPriceBM()">📋 Copy BM Price Message</button>
-    <div style="height:10px"></div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════════════════════════════════
-  AI CHATBOX
-════════════════════════════════════════════════════════════════════ -->
-<div class="chat-ov hidden" id="chat-ov">
-  <div class="chat-hdr">
-    <div>
-      <div style="font-weight:800;font-size:0.92rem">🤖 AI Assistant</div>
-      <div style="font-size:0.67rem;color:var(--muted)">Search, manage & get insights</div>
-    </div>
-    <button class="back-btn" onclick="closeChat()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  </div>
-  <div class="chat-msgs" id="chat-msgs"></div>
-  <div class="chat-suggestion" id="chat-sugs"></div>
-  <div class="chat-bar">
-    <input class="chat-inp" id="chat-inp" placeholder='Try: "find klinik ivory" or "show due today"' onkeydown="if(event.key==='Enter')sendChat()"/>
-    <button class="chat-send" onclick="sendChat()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
-  </div>
-</div>
-
-<!-- MODAL -->
-<div class="modal-bg" id="modal-bg">
-  <div class="modal">
-    <h3 id="modal-title">Confirm</h3>
-    <p id="modal-msg"></p>
-    <div class="modal-row">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-danger" id="modal-ok">Confirm</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<!-- ════════════════════════════════════════════════════════════════════
-  FIREBASE
-════════════════════════════════════════════════════════════════════ -->
-<script type="module">
-import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import{getDatabase,ref,onValue,set}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-const C={apiKey:"AIzaSyBs1ZaQhEO5dVVthwlWaob8aOUr8C1xEfs",authDomain:"isaac-crm-b9379.firebaseapp.com",projectId:"isaac-crm-b9379",storageBucket:"isaac-crm-b9379.firebasestorage.app",messagingSenderId:"368486369437",appId:"1:368486369437:web:bf5dde01204285a267ec74",databaseURL:"https://isaac-crm-b9379-default-rtdb.asia-southeast1.firebasedatabase.app"};
-const app=initializeApp(C);const db=getDatabase(app);
-window._fb={db,ref,set};window._fbOK=true;
-setSyncStatus('syncing');
-onValue(ref(db,'businesses'),snap=>{
-  const d=snap.val();
-  businesses=d?Object.values(d).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)):[];
-  setSyncStatus('synced');
-  if(activeTab==='home')renderHome();
-  if(currentId&&document.getElementById('screen-detail')&&!document.getElementById('screen-detail').classList.contains('hidden'))renderDetail();
-},()=>setSyncStatus('error'));
-onValue(ref(db,'callTracker'),snap=>{callTracker=snap.val()||{};renderTracker();});
-</script>
-
-<!-- ════════════════════════════════════════════════════════════════════
-  MAIN LOGIC
-════════════════════════════════════════════════════════════════════ -->
-<script>
-// ─── CONSTANTS ────────────────────────────────────────────────────────────────
-const DAY=86400000;
-const STATUSES=[
-  {key:'new',         label:'New',             cls:'s-new',          prog:0,   autoDays:0},
-  {key:'maybe',       label:'Maybe',           cls:'s-maybe',        prog:10,  autoDays:0},
-  {key:'interested',  label:'Interested',      cls:'s-interested',   prog:25,  autoDays:2},
-  {key:'askingboss',  label:'Asking Boss',     cls:'s-askingboss',   prog:35,  autoDays:0},
-  {key:'seenprice',   label:'Seen Price',      cls:'s-seenprice',    prog:55,  autoDays:2},
-  {key:'2interested', label:'2× Interested',   cls:'s-2interested',  prog:38,  autoDays:9},
-  {key:'3interested', label:'3× Interested',   cls:'s-3interested',  prog:42,  autoDays:14},
-  {key:'maybeinfuture',label:'Maybe Future',   cls:'s-maybeinfuture',prog:20,  autoDays:0},
-  {key:'2seenprice',  label:'2× Seen Price',   cls:'s-2seenprice',   prog:60,  autoDays:5},
-  {key:'3seenprice',  label:'3× Seen Price',   cls:'s-3seenprice',   prog:65,  autoDays:14},
-  {key:'finalmessage',label:'Final Message',   cls:'s-finalmessage', prog:70,  autoDays:0},
-  {key:'rejected',    label:'Rejected',        cls:'s-rejected',     prog:0,   autoDays:0},
-  {key:'closed',      label:'Closed Won 🎉',   cls:'s-closed',       prog:100, autoDays:0},
-];
-const AVCOLS=['#00b4d8','#7c3aed','#ea580c','#ca8a04','#10b981','#f97316','#16a34a','#db2777'];
-
-// ─── TEMPLATES ────────────────────────────────────────────────────────────────
-const T={
-  firstContact:{
-    label:'First Contact',
-    en:`Hi! This is Isaac 👋\n\nI came across [Business Name] and noticed you don't have a website yet.\n\nI specialise in building professional websites for businesses like yours — and I'd love to show you what I can do.\n\nWould you be open to having a quick look at a demo I've prepared? No commitment needed, just a 2-minute look 🙏`,
-    bm:`Hai! Saya Isaac 👋\n\nSaya terserempak dengan [Nama Perniagaan] dan perasan yang pihak anda belum ada website lagi.\n\nSaya pakar dalam membina website profesional untuk perniagaan seperti anda — dan saya ingin tunjukkan apa yang saya boleh buat.\n\nBoleh tak saya kongsikan satu demo yang saya dah sediakan? Takde komitmen, tengok 2 minit je 🙏`
-  },
-  afterCall:{
-    label:'After Call (Interested)',
-    en:`Hi, this is Isaac. Thank you so much for your time.\nI'll get the demo website ready for your clinic and send it over soon. It's completely free to check out, and you can share it with the person in charge.\nLet me know if you have any thoughts 😊`,
-    bm:`Hi, ini Isaac. Terima kasih banyak atas masa anda.\nSaya akan siapkan demo website untuk klinik dan hantar sebentar lagi. Boleh tengok percuma je, dan boleh kongsi dengan PIC juga.\nKalau ada apa-apa komen, bagitahu je ya 😊`
-  },
-  sendDemo:{
-    label:'Sending Demo Link',
-    en:`Hi, this is Isaac. I've made a demo website for your clinic and here's the link:\n👉 [PASTE DEMO LINK HERE]\n\nIt's completely free to view, and you can forward this to the person in charge or owner.\nThis is just a demo, so anything (images, info, layout) can be changed if you're interested.\nFeel free to message me back if you guys are interested 😊`,
-    bm:`Hi, saya Isaac. Tadi kita ada bercakap melalui telefon. Saya ada buat satu demo website untuk klinik anda, ini linknya:\n👉 [TAMPAL LINK DEMO DI SINI]\n\nIa percuma untuk dilihat, dan anda juga boleh forward kepada owner atau orang yang in-charge.\nIni cuma demo sahaja, jadi gambar, maklumat, dan layout semua boleh diubah jika anda berminat.\nKalau ada apa-apa soalan atau nak bincang lebih lanjut, boleh saja reply mesej ini 😊`
-  },
-  askBoss:{
-    label:'Ask Boss Update',
-    en:`Hi, Isaac here 😊. Thanks again for your time earlier. You can just let me know once there's any update from your boss 👍`,
-    bm:`Hi, Isaac di sini 😊. Terima kasih sekali lagi atas masa tadi. Boleh maklumkan kepada saya bila ada sebarang update daripada boss ya 👍`
-  },
-  maybeDoubleCheck:{
-    label:'Maybe – Double Check',
-    en:`Hi, Isaac here 😊. Sorry to bother, but can you double-check if your website is live? I couldn't seem to find it.\n\nIf it is, thank you so much for your time! If not, just message me and I can send over the demo website I made for you 👍`,
-    bm:`Hi, Isaac di sini 😊. Maaf mengganggu, boleh tak double-check kalau website klinik korang live? Saya tak dapat jumpa website.\n\nKalau ada, terima kasih banyak atas masa korang. Kalau belum, boleh message saya, saya boleh hantar demo website yang saya buat untuk korang 👍`
-  },
-  maybeHasWebsite:{
-    label:'Maybe – Has Website',
-    en:`Okay, got it. Thanks a lot for your time!\n\nJust to let you know, the demo website I prepared is designed to be modern and professional. It would be great if you could share it with the owner. If the owner is interested or if you decide to change your mind, feel free to message me anytime 👍\nThank you so much for your time!`,
-    bm:`Okay, faham. Terima kasih banyak atas masa anda!\n\nSekadar makluman. Demo website yang saya sediakan moden dan profesional. Boleh kongsikan dengan owner. Kalau berminat atau berubah fikiran, mesej saya bila-bila masa 👍`
-  },
-  maybeNoResp:{
-    label:'Maybe – No Response',
-    en:`Hi so sorry to bother again.\nJust to let you know, the demo website I prepared is designed to be modern and professional. It would be great if you could share it with the owner. If the owner is interested or if you decide to change your mind, feel free to message me anytime.\nThank you so much for your time!`,
-    bm:`Hi, maaf mengganggu lagi.\n\nSekadar makluman. Demo website yang saya sediakan moden dan profesional. Boleh kongsikan dengan owner. Kalau berminat atau berubah fikiran, mesej saya bila-bila masa 👍\nTerima kasih banyak atas masa anda!`
-  },
-  price:{
-    label:'Price Breakdown',
-    en:`Okay so this is the price for the website, right now we are doing a Ramadan promo!\n\nOne-time setup fee of RM 2,799 to get your professional website live, then just RM 349/month to keep everything running.\n\nTo put it simply, your monthly fee costs less than one patient appointment. Your website pays for itself with just one extra booking.\n\nAlso, just for your peace of mind, if you're not satisfied with the website, I offer a full refund immediately with no strings attached 👍`,
-    bm:`So sekarang kami ada promo khas Ramadan!\n\nSetup sekali sahaja RM2,799 untuk lancarkan website profesional, lepas tu RM349/bulan je untuk urus semuanya.\n\nKos bulanan ni kurang dari nilai satu temujanji pesakit, jadi website boleh "cover" kos dengan hanya satu booking tambahan 👍\n\nSelain itu, demi ketenangan minda anda, jika anda tidak berpuas hati dengan laman web ini, saya menawarkan pemulangan wang penuh serta-merta tanpa sebarang syarat 👍`
-  },
-  rm349:{
-    label:'RM349 Explanation',
-    en:`The RM349/month covers everything to keep your website running smoothly:\n\n✅ Maintenance & updates\n✅ Security monitoring\n✅ Fixing any technical issues\n✅ Hosting management\n\nEverything's taken care of, so your website stays live, fast, and secure 👍`,
-    bm:`RM349/bulan merangkumi semua yang diperlukan untuk memastikan website anda berjalan lancar:\n\n✅ Penyelenggaraan & kemaskini\n✅ Pemantauan keselamatan\n✅ Penyelesaian sebarang isu teknikal\n✅ Pengurusan hosting\n\nSemua diuruskan, jadi website anda akan sentiasa live, pantas, dan selamat 👍`
-  },
-  domain:{
-    label:'Domain & Hosting',
-    en:`For hosting, I can take care of everything for you 😊\n\nFor the domain, it's better if you purchase it yourselves so that you have full access and control over it. This way, everything stays under your management, and you won't have to rely on anyone else in the future.`,
-    bm:`Untuk hosting, saya boleh uruskan semuanya untuk anda 😊\n\nUntuk domain, lebih baik jika anda beli sendiri supaya anda ada akses penuh dan kawalan sepenuhnya. Dengan cara ini, semua berada di bawah pengurusan anda sendiri dan anda tidak perlu bergantung pada orang lain di masa hadapan.`
-  },
-  followBoss:{
-    label:'Follow-up – Boss',
-    en:`Hi, this is Isaac. So sorry for disturbing again. I just wanted to do a quick check just in case our message got buried.\nNo rush at all, I was just wondering if the boss has given any response?\nThank you so much for your time 🙏`,
-    bm:`Hi, Isaac di sini. Maaf mengganggu lagi. Saya cuma nak follow-up sikit kalau mesej tadi terkubur.\nTakde rush langsung, saya cuma nak tanya kalau boss dah bagi sebarang maklum balas?\nTerima kasih banyak atas masa anda 🙏`
-  },
-  fu2interested:{
-    label:'Follow-up (2× Int.)',
-    en:`Hi, this is Isaac. Sorry to bother again, just a quick follow-up in case our previous message got buried.\n\nNo rush at all, the demo website I prepared is designed to be modern and professional. It would be great if you could share it with the owner. If the owner is interested or if you decide to change your mind, feel free to message me anytime 👍\nThank you so much for your time!`,
-    bm:`Hi, Isaac di sini. Maaf nak mengganggu lagi, cuma nak follow-up sikit kalau mesej sebelum ini terlepas pandang.\n\nNo rush at all, cuma nak beritahu. Demo website yang saya sediakan moden dan profesional. Boleh kongsikan dengan owner. Kalau berminat atau berubah fikiran, mesej saya bila-bila masa 👍\nTerima kasih banyak atas masa anda!`
-  },
-  fu3interested:{
-    label:'Follow-up (3× Int.)',
-    en:`Hi, Isaac here, so sorry for disturbing again.\n\nJust wanted to do a quick follow up on the demo website I sent a few days ago, any update from the owner?\n\nIf anything needs changing or you have questions, just let me know, I'm happy to help 👍`,
-    bm:`Hi, Isaac di sini 😊 Maaf mangganggu.\n\nSaya cuma nak follow-up sikit mengenai demo website yang saya kongsikan.\n\nNo rush at all, saya cuma nak tahu kalau owner sempat beri sebarang maklum balas. Kalau ada feedback atau apa-apa yang nak diubah, boleh je maklumkan kepada saya ya 👍`
-  },
-  fu2seenprice:{
-    label:'Follow-up (2× Price)',
-    en:`Hi, this is Isaac. Sorry to bother you again. I just wanted to follow up and see if the owner had a chance to decide regarding the website.\n\nIf the price is a concern, I'm happy to discuss and find a solution that works for both sides.`,
-    bm:`Hi, Isaac di sini. Maaf mengganggu sekali lagi. Saya cuma nak follow up dan tahu sama ada owner sempat buat keputusan berkenaan website.\n\nKalau harga jadi isu, saya terbuka untuk berbincang dan cari penyelesaian yang sesuai untuk kedua-dua pihak.`
-  },
-  raya:{
-    label:'Raya Message',
-    en:`Selamat Hari Raya, Maaf Zahir dan Batin to you and the team 🌙\n\nJust checking in on the website proposal I shared previously.\nWould be great to get it live as a fresh start after Raya 😊`,
-    bm:`Selamat Hari Raya, Maaf Zahir dan Batin kepada anda dan team 🌙\n\nSaya cuma nak follow up mengenai cadangan website yang saya kongsikan sebelum ini.\nBagus juga kalau boleh launch sebagai fresh start lepas Raya 😊`
-  },
-  negotiate:{
-    label:'Negotiate Price',
-    en:`Hi! Isaac here 🙏\n\nI completely understand the budget concern — running a business isn't cheap!\n\nHere's what I can do: RM 2,499 as my final offer. That includes everything — full website, Google Maps, WhatsApp button, booking form, and edits after launch.\n\nWould that work? 😊`,
-    bm:`Hi! Isaac di sini 🙏\n\nSaya faham sangat pasal bajet — jalankan perniagaan memang tak murah!\n\nNi yang saya boleh buat: RM2,499 sebagai tawaran muktamad. Termasuk semua — website penuh, Google Maps, butang WhatsApp, borang tempahan, dan pengeditan selepas launch.\n\nBoleh ke macam tu? 😊`
-  },
-  finalMsg:{
-    label:'Final Message',
-    en:`Just a final note if you ever decide you'd like a professional website built for your clinic, feel free to message me anytime at this number.\n\nI'd be happy to help whenever you're ready 👍`,
-    bm:`Sekadar mesej terakhir kalau suatu hari nanti anda berminat untuk bina website profesional untuk klinik anda, boleh je WhatsApp saya bila-bila masa di nombor ini.\n\nSaya sedia tolong bila-bila anda bersedia 👍`
-  },
-  closed:{
-    label:'Deal Closed 🎉',
-    en:`Hi [Name]! Isaac here 🎉\n\nThank you so much for trusting me with your website! I'm really excited to work on this.\n\nI'll get started right away and keep you updated every step of the way.\n\nIf you have any photos, logo, or info to include, feel free to send them anytime 🙌`,
-    bm:`Hi [Nama]! Isaac di sini 🎉\n\nTerima kasih banyak-banyak kerana mempercayai saya! Saya sangat teruja.\n\nSaya akan mula sekarang dan update anda setiap langkah.\n\nKalau ada gambar, logo, atau maklumat, boleh hantar bila-bila masa 🙌`
-  }
-};
-
-// status → suggested template keys
-const STMPL={
-  new:['firstContact'],
-  maybe:['maybeDoubleCheck'],
-  interested:['afterCall','sendDemo','askBoss'],
-  askingboss:['askBoss','followBoss'],
-  seenprice:['price','rm349','domain'],
-  '2interested':['fu2interested'],
-  '3interested':['fu3interested'],
-  maybeinfuture:['maybeHasWebsite'],
-  '2seenprice':['fu2seenprice','negotiate'],
-  '3seenprice':['raya','negotiate'],
-  finalmessage:['finalMsg'],
-  rejected:['negotiate','finalMsg'],
-  closed:['closed'],
-};
-
-// ─── STATE ────────────────────────────────────────────────────────────────────
-let businesses=[],callTracker={};
-let currentId=null,curFilter='all',curSit=null,qsBizId=null,activeTab='home',lpTimer=null;
-
-// ─── SYNC ─────────────────────────────────────────────────────────────────────
-function setSyncStatus(s){const d=document.getElementById('sdot');if(d)d.className='sdot '+s;}
-function saveData(){
-  localStorage.setItem('crm_biz',JSON.stringify(businesses));
-  if(!window._fbOK)return;
-  setSyncStatus('syncing');
-  const{db,ref,set}=window._fb;
-  const obj={};businesses.forEach(b=>{obj[b.id]=b;});
-  set(ref(db,'businesses'),obj).then(()=>setSyncStatus('synced')).catch(()=>setSyncStatus('error'));
-}
-function saveTracker(){
-  localStorage.setItem('crm_tracker',JSON.stringify(callTracker));
-  if(!window._fbOK)return;
-  const{db,ref,set}=window._fb;
-  set(ref(db,'callTracker'),callTracker).catch(()=>{});
-}
-function loadLocal(){
-  try{businesses=JSON.parse(localStorage.getItem('crm_biz')||'[]');}catch(e){businesses=[];}
-  try{callTracker=JSON.parse(localStorage.getItem('crm_tracker')||'{}');}catch(e){callTracker={};}
-}
-
-// ─── UTILS ────────────────────────────────────────────────────────────────────
-const genId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
-const getBiz=id=>businesses.find(b=>b.id===id);
-const getSt=k=>STATUSES.find(s=>s.key===k)||STATUSES[0];
-function avc(n){let h=0;for(const c of n)h=(h*31+c.charCodeAt(0))&0xffff;return AVCOLS[h%AVCOLS.length];}
-const initials=n=>n.trim().split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2);
-const fmtPhone=p=>(p||'').replace(/[^0-9]/g,'');
-const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const todayKey=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
-const fmtDateKey=k=>{const[y,m,d]=k.split('-');return new Date(y,m-1,d).toLocaleDateString('en-MY',{weekday:'short',day:'numeric',month:'short',year:'numeric'});};
-function timeAgo(ts){const d=Date.now()-ts;if(d<60000)return'just now';if(d<3600000)return Math.floor(d/60000)+'m ago';if(d<DAY)return Math.floor(d/3600000)+'h ago';if(d<7*DAY)return Math.floor(d/DAY)+'d ago';return new Date(ts).toLocaleDateString('en-MY',{day:'numeric',month:'short'});}
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
-function fill(txt,name){return txt.replace(/\[Business Name\]/g,name).replace(/\[Nama Perniagaan\]/g,name).replace(/\[Name\]/g,name).replace(/\[Nama\]/g,name);}
-
-function getDueState(b){
-  if(!b.dueDate)return null;
-  const diff=b.dueDate-Date.now();
-  if(diff<0)return'overdue';
-  if(diff<DAY)return'today';
-  if(diff<3*DAY)return'soon';
-  return null;
-}
-function fmtDue(due){
-  const diff=due-Date.now();
-  if(diff<0){const h=Math.ceil(-diff/3600000);return h<24?'Overdue '+h+'h':'Overdue '+Math.ceil(-diff/DAY)+'d';}
-  if(diff<DAY){const h=Math.ceil(diff/3600000);return h<=1?'Due <1h':'Due in '+h+'h';}
-  return'Due in '+Math.ceil(diff/DAY)+'d';
-}
-function setAutoDue(b,key){
-  const st=getSt(key);
-  if(st.autoDays>0)b.dueDate=Date.now()+st.autoDays*DAY;
-  else if(['rejected','closed','finalmessage','maybeinfuture','new','maybe','maybeinfuture'].includes(key))b.dueDate=null;
-}
-
-// ─── SHEET HELPERS ────────────────────────────────────────────────────────────
-function openSh(bdId,shId){document.getElementById(bdId).classList.add('open');document.getElementById(shId).classList.add('open');}
-function closeSh(bdId,shId){document.getElementById(bdId).classList.remove('open');document.getElementById(shId).classList.remove('open');}
-
-// ─── SCREENS ──────────────────────────────────────────────────────────────────
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id));
-  if(id==='screen-home')renderHome();
-  if(id==='screen-detail')renderDetail();
-}
-function switchTab(t){
-  activeTab=t;
-  document.getElementById('ni-home').classList.toggle('active',t==='home');
-  document.getElementById('ni-tracker').classList.toggle('active',t==='tracker');
-  document.getElementById('home-scroll').style.display=t==='home'?'':'none';
-  document.getElementById('tracker-scroll').style.display=t==='tracker'?'block':'none';
-  if(t==='tracker')renderTracker();else renderHome();
-}
-
-// ─── ADD ──────────────────────────────────────────────────────────────────────
-function addBiz(name,phone){
-  name=name.trim();phone=fmtPhone(phone);if(!name)return false;
-  businesses.unshift({id:genId(),name,phone,status:'new',notes:'',timeline:[{ts:Date.now(),text:'Added to CRM'}],createdAt:Date.now(),dueDate:null});
-  saveData();return true;
-}
-function addSingle(){
-  const n=document.getElementById('add-name').value;const p=document.getElementById('add-phone').value;
-  if(addBiz(n,p)){document.getElementById('add-name').value='';document.getElementById('add-phone').value='';showToast('Added!');showScreen('screen-home');}
-  else showToast('Enter a business name');
-}
-function bulkAdd(){
-  const raw=document.getElementById('bulk-paste').value.trim();if(!raw)return;
-  let count=0,skip=0;
-  raw.split('\n').forEach(line=>{
-    line=line.trim();if(!line)return;
-    const parts=line.split(/\t|[|]/).map(p=>p.trim());
-    const cleaned=parts.filter(p=>{if(!p)return false;const u=p.toUpperCase();if(u==='TRUE'||u==='FALSE')return false;if(/^\d{1,4}$/.test(p))return false;return true;});
-    if(!cleaned.length){skip++;return;}
-    let phone='',nameParts=[];
-    cleaned.forEach(c=>{
-      const d=c.replace(/[\s\-\+\(\)]/g,'');
-      if(/^[0-9\s\-\+\(\)]{8,14}$/.test(c)&&/^(0|60|\+60)/.test(d)){if(!phone)phone=d.replace(/^60/,'0').replace(/^\+60/,'0');}
-      else nameParts.push(c);
-    });
-    const name=nameParts.join(' ').trim();if(!name){skip++;return;}
-    if(businesses.some(b=>b.name.toLowerCase()===name.toLowerCase()||(phone&&b.phone===fmtPhone(phone)))){skip++;return;}
-    if(addBiz(name,phone))count++;
-  });
-  document.getElementById('bulk-paste').value='';
-  showToast('Imported '+count+'! ('+skip+' skipped)');showScreen('screen-home');
-}
-
-// ─── RENDER HOME ──────────────────────────────────────────────────────────────
-function renderHome(){
-  if(activeTab!=='home')return;
-  const q=(document.getElementById('srch')?.value||'').toLowerCase().trim();
-  const counts={};STATUSES.forEach(s=>{counts[s.key]=businesses.filter(b=>b.status===s.key).length;});
-  const pl=businesses.filter(b=>!['new','rejected','closed','finalmessage','maybeinfuture'].includes(b.status));
-  document.getElementById('pipe-amt').textContent='RM'+(pl.length*2799).toLocaleString();
-  document.getElementById('pipe-sub').textContent=pl.length+' deal'+(pl.length!==1?'s':'')+' in pipeline × RM2,799 avg';
-  document.getElementById('dash-sub').textContent=businesses.length+' businesses tracked';
-
-  const overdue=businesses.filter(b=>getDueState(b)==='overdue');
-  const dueToday=businesses.filter(b=>getDueState(b)==='today');
-  const ob=document.getElementById('banner-overdue'),tb=document.getElementById('banner-today');
-  ob.style.display=overdue.length?'flex':'none';
-  if(overdue.length)document.getElementById('banner-overdue-txt').textContent=overdue.length+' business'+(overdue.length>1?'es are':' is')+' OVERDUE — follow up now!';
-  tb.style.display=dueToday.length?'flex':'none';
-  if(dueToday.length)document.getElementById('banner-today-txt').textContent=dueToday.length+' follow-up'+(dueToday.length>1?'s':'')+' due today!';
-
-  document.getElementById('stats-grid').innerHTML=`
-    <div class="stat-c"><div class="stat-n">${businesses.length}</div><div class="stat-l">Total</div></div>
-    <div class="stat-c"><div class="stat-n" style="color:#22c55e">${counts.closed||0}</div><div class="stat-l">Closed Won</div></div>
-    <div class="stat-c"><div class="stat-n" style="color:#ea580c">${overdue.length+dueToday.length}</div><div class="stat-l">Due Now</div></div>
-    <div class="stat-c"><div class="stat-n" style="color:#dc2626">${counts.rejected||0}</div><div class="stat-l">Rejected</div></div>`;
-
-  const filters=[{key:'all',label:'All'},...STATUSES.map(s=>({key:s.key,label:s.label}))];
-  document.getElementById('ftabs').innerHTML=filters.map(f=>`<div class="ftab${curFilter===f.key?' active':''}" onclick="setFilter('${f.key}')">${f.label}${counts[f.key]?' ('+counts[f.key]+')':''}</div>`).join('');
-
-  let filtered=curFilter==='all'?[...businesses]:businesses.filter(b=>b.status===curFilter);
-  if(q)filtered=filtered.filter(b=>b.name.toLowerCase().includes(q)||(b.phone||'').includes(q));
-
-  // Sort: overdue → today → soon → rest
-  const ord={overdue:0,today:1,soon:2};
-  filtered.sort((a,b)=>{
-    const da=getDueState(a),db2=getDueState(b);
-    const oa=da!=null?ord[da]:3,ob2=db2!=null?ord[db2]:3;
-    if(oa!==ob2)return oa-ob2;
-    return(b.createdAt||0)-(a.createdAt||0);
-  });
-
-  const list=document.getElementById('biz-list');
-  if(!filtered.length){list.innerHTML='<div class="empty"><p>No businesses here</p></div>';return;}
-  list.innerHTML=filtered.map(b=>{
-    const st=getSt(b.status),ds=getDueState(b);
-    const dueBadge=ds?`<span class="due-chip ${ds?'due-'+ds:''}">${fmtDue(b.dueDate)}</span>`:'';
-    return`<div class="biz-card${ds?' due-'+ds:''}" onclick="openBiz('${b.id}')"
-      ontouchstart="lpStart('${b.id}')" ontouchend="lpCancel()" ontouchmove="lpCancel()"
-      oncontextmenu="openQS('${b.id}',event)">
-      <div class="biz-avatar" style="background:${avc(b.name)};color:#000">${initials(b.name)}</div>
-      <div class="biz-info">
-        <div class="biz-name">${esc(b.name)}</div>
-        <div class="biz-meta">${b.phone||'No phone'}${dueBadge?'<span>'+dueBadge+'</span>':''}</div>
-        <div class="prog-bar"><div class="prog-fill" style="width:${st.prog}%"></div></div>
-      </div>
-      <span class="status-badge ${st.cls}">${st.label}</span>
-    </div>`;
-  }).join('');
-}
-function setFilter(f){curFilter=f;renderHome();}
-
-// ─── TRACKER ──────────────────────────────────────────────────────────────────
-function renderTracker(){
-  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const today=new Date(),wk=[];
-  for(let i=6;i>=0;i--){
-    const d=new Date(today);d.setDate(today.getDate()-i);
-    const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-    wk.push({lbl:days[d.getDay()],k,n:callTracker[k]||0,isToday:i===0});
-  }
-  const mx=Math.max(...wk.map(d=>d.n),1),tot=wk.reduce((a,d)=>a+d.n,0);
-  const wc=document.getElementById('wk-card');
-  if(wc)wc.innerHTML=`<div style="font-size:0.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">📊 This Week — ${tot} calls total</div>
-    <div class="wk-chart">${wk.map(d=>`<div class="wk-col">
-      <div class="wk-lbl">${d.lbl}</div>
-      <div class="wk-bar"><div class="wk-fill" style="height:${Math.max(8,(d.n/mx)*100)}%;background:${d.isToday?'#22c55e':'#333'}"></div></div>
-      <div class="wk-num" style="color:${d.isToday?'#22c55e':'var(--muted)'}">${d.n}</div>
-    </div>`).join('')}</div>`;
-
-  const keys=Object.keys(callTracker).sort((a,b)=>b.localeCompare(a));
-  const tlog=document.getElementById('tracker-log');if(!tlog)return;
-  if(!keys.length){tlog.innerHTML='<div class="empty"><p>No calls logged yet 📞</p></div>';return;}
-  const mxA=Math.max(...keys.map(k=>callTracker[k]),1);
-  tlog.innerHTML=keys.map(k=>`<div class="card" style="margin-bottom:7px">
-    <div style="display:flex;align-items:center;justify-content:space-between">
-      <div>
-        <div style="font-weight:700;font-size:0.83rem">${fmtDateKey(k)}${k===todayKey()?' <span style="font-size:0.58rem;color:#22c55e;font-weight:700">TODAY</span>':''}</div>
-        <div style="font-size:0.7rem;color:var(--muted)">${callTracker[k]} call${callTracker[k]!==1?'s':''}</div>
-      </div>
-      <div style="font-size:1.3rem;font-weight:900;color:#fff">${callTracker[k]}</div>
-    </div>
-    <div style="background:var(--card2);border-radius:3px;height:4px;margin-top:7px;overflow:hidden">
-      <div style="height:100%;border-radius:3px;background:#fff;width:${(callTracker[k]/mxA)*100}%"></div>
-    </div>
-  </div>`).join('');
-}
-
-// ─── DETAIL ───────────────────────────────────────────────────────────────────
-function openBiz(id){currentId=id;showScreen('screen-detail');}
-function renderDetail(){
-  const b=getBiz(currentId);if(!b){showScreen('screen-home');return;}
-  document.getElementById('det-name').textContent=b.name;
-  document.getElementById('det-phone').textContent=b.phone||'No phone saved';
-  const p=fmtPhone(b.phone||'');
-  document.getElementById('det-call-btn').href=p?'tel:+60'+p.replace(/^0/,''):'#';
-  document.getElementById('det-wa-btn').href=p?'https://wa.me/60'+p.replace(/^0/,''):'#';
-
-  // Status pills
-  document.getElementById('det-status-row').innerHTML=STATUSES.map(s=>
-    `<div class="status-pill ${s.cls}${b.status===s.key?' active':''}" onclick="setStatus('${s.key}')">${s.label}</div>`).join('');
-
-  // Due box
-  const dueEl=document.getElementById('det-due-box');
-  if(b.dueDate){
-    const ds=getDueState(b)||'';
-    dueEl.innerHTML=`<div class="due-box${ds?' due-'+ds:''}">
-      <div>
-        <div style="font-size:0.65rem;font-weight:700;color:var(--muted)">📅 Follow-up Due</div>
-        <div style="font-size:0.87rem;font-weight:700;margin-top:2px">${fmtDue(b.dueDate)}</div>
-        <div style="font-size:0.64rem;color:var(--muted)">${new Date(b.dueDate).toLocaleDateString('en-MY',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
-      </div>
-      <button class="btn btn-sm btn-ghost" onclick="openEdit()">Edit</button>
-    </div>`;
-  }else dueEl.innerHTML='';
-
-  document.getElementById('det-notes').value=b.notes||'';
-  const tl=(b.timeline||[]).slice().reverse();
-  document.getElementById('det-tl').innerHTML=tl.length
-    ?tl.map(t=>`<div class="tl-item"><div class="tl-dot"></div><div class="tl-txt">${esc(t.text)}</div><div class="tl-time">${timeAgo(t.ts)}</div></div>`).join('')
-    :'<p style="font-size:0.75rem;color:var(--muted)">No activity yet</p>';
-}
-
-function setStatus(key){
-  const b=getBiz(currentId);if(!b)return;
-  b.status=key;b.timeline=b.timeline||[];
-  b.timeline.push({ts:Date.now(),text:'Status → '+getSt(key).label});
-  setAutoDue(b,key);saveData();renderDetail();
-  // auto-suggest template
-  const map={interested:'sendDemo',askingboss:'askBoss',seenprice:'price','2interested':'fu2interested','3interested':'fu3interested','2seenprice':'fu2seenprice','3seenprice':'raya',finalmessage:'finalMsg',closed:'closed',maybe:'maybeDoubleCheck'};
-  if(map[key])curSit=map[key];
-}
-
-function saveNotes(){
-  const b=getBiz(currentId);if(!b)return;
-  const n=document.getElementById('det-notes').value.trim();
-  b.notes=n;
-  if(n){b.timeline=b.timeline||[];b.timeline.push({ts:Date.now(),text:'Note: '+n.slice(0,60)+(n.length>60?'...':'')});}
-  saveData();renderDetail();showToast('Note saved!');
-}
-
-function confirmDelete(){
-  showModal('Delete Business?','This cannot be undone.',()=>{
-    businesses=businesses.filter(b=>b.id!==currentId);saveData();showScreen('screen-home');
-  });
-}
-
-// ─── EDIT ─────────────────────────────────────────────────────────────────────
-function openEdit(){
-  const b=getBiz(currentId);if(!b)return;
-  document.getElementById('edit-name').value=b.name;
-  document.getElementById('edit-phone').value=b.phone||'';
-  if(b.dueDate){
-    const d=new Date(b.dueDate);
-    document.getElementById('edit-due').value=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);
-  }else document.getElementById('edit-due').value='';
-  // status row in edit
-  document.getElementById('edit-status-row').innerHTML=STATUSES.map(s=>
-    `<div class="status-pill ${s.cls}${b.status===s.key?' active':''}" onclick="editSetStatus('${s.key}')">${s.label}</div>`).join('');
-  showScreen('screen-edit');
-}
-function editSetStatus(key){
-  const b=getBiz(currentId);if(!b)return;
-  b.status=key;
-  document.getElementById('edit-status-row').querySelectorAll('.status-pill').forEach((el,i)=>{
-    el.classList.toggle('active',STATUSES[i].key===key);
-  });
-}
-function saveEdit(){
-  const b=getBiz(currentId);if(!b)return;
-  const name=document.getElementById('edit-name').value.trim();
-  if(name)b.name=name;
-  b.phone=fmtPhone(document.getElementById('edit-phone').value);
-  const due=document.getElementById('edit-due').value;
-  b.dueDate=due?new Date(due).getTime():null;
-  b.timeline=b.timeline||[];b.timeline.push({ts:Date.now(),text:'Details updated'});
-  saveData();showToast('Saved ✓');showScreen('screen-detail');
-}
-
-// ─── CALL TAP ─────────────────────────────────────────────────────────────────
-function handleCallTap(){
-  const k=todayKey();callTracker[k]=(callTracker[k]||0)+1;saveTracker();renderTracker();
-  setTimeout(()=>openWorkflow(),1500);
-}
-
-// ─── LONG PRESS ───────────────────────────────────────────────────────────────
-function lpStart(id){lpTimer=setTimeout(()=>openQS(id,null),650);}
-function lpCancel(){clearTimeout(lpTimer);}
-function openQS(id,e){
-  if(e){e.preventDefault();e.stopPropagation();}
-  qsBizId=id;const b=getBiz(id);if(!b)return;
-  document.getElementById('qs-bname').textContent=b.name;
-  document.getElementById('qs-pills').innerHTML=STATUSES.map(s=>
-    `<div class="status-pill ${s.cls}${b.status===s.key?' active':''}" style="margin-bottom:5px" onclick="qsApply('${s.key}')">${s.label}</div>`).join('');
-  openSh('qs-bd','qs-sheet');
-}
-function closeQS(){closeSh('qs-bd','qs-sheet');}
-function qsApply(key){
-  const b=getBiz(qsBizId);if(!b)return;
-  b.status=key;b.timeline=b.timeline||[];
-  b.timeline.push({ts:Date.now(),text:'Status → '+getSt(key).label+' (quick)'});
-  setAutoDue(b,key);saveData();closeQS();renderHome();showToast('Status updated!');
-}
-
-// ─── WORKFLOW ─────────────────────────────────────────────────────────────────
-function openWorkflow(){
-  const b=getBiz(currentId);if(!b)return;
-  document.getElementById('wf-bname').textContent=b.name;
-  const s=b.status;
-  let outs=[];
-
-  if(['new','maybe'].includes(s)){
-    outs=[
-      {i:'📱',l:'Interested — wants to see demo',d:'They said yes / want to know more',c:'ob-green',a:'wf_interested'},
-      {i:'🌐',l:'Says they have a website',d:'Need to double-check if it\'s live',c:'ob-blue',a:'wf_maybe'},
-      {i:'🙋',l:'Will ask the boss / owner',d:'Going to check with the person in charge',c:'ob-orange',a:'wf_askingboss'},
-      {i:'❌',l:'Rejected / Not interested',d:'Said no or hung up',c:'ob-red',a:'wf_rejected'},
-      {i:'📵',l:'No answer — try again later',d:'Couldn\'t reach them',c:'ob-gray',a:'wf_noresponse'},
-    ];
-  }else if(['interested','2interested','3interested'].includes(s)){
-    outs=[
-      {i:'💰',l:'Boss has seen the price',d:'Owner is interested, discussing price',c:'ob-green',a:'wf_seenprice'},
-      {i:'📤',l:'Sent to boss — waiting',d:'Forwarded the demo, boss hasn\'t replied yet',c:'ob-orange',a:'wf_askingboss'},
-      {i:'❌',l:'Rejected',d:'They said no',c:'ob-red',a:'wf_rejected'},
-      {i:'🔄',l:'No update yet',d:'Still waiting, no change needed',c:'ob-gray',a:'wf_nochange'},
-    ];
-  }else if(s==='askingboss'){
-    outs=[
-      {i:'✅',l:"Boss says DON'T have a website",d:'→ Go straight to sending demo!',c:'ob-green',a:'wf_bossnowebsite'},
-      {i:'🌐',l:'Boss says THEY DO have a website',d:'→ Maybe in the future',c:'ob-blue',a:'wf_bosshasswebsite'},
-      {i:'📞',l:'No response from boss yet',d:'→ Send follow-up message',c:'ob-orange',a:'wf_bossnoresponse'},
-      {i:'❌',l:'Rejected',d:'They said no',c:'ob-red',a:'wf_rejected'},
-    ];
-  }else if(['seenprice','2seenprice','3seenprice'].includes(s)){
-    outs=[
-      {i:'🤝',l:'They want to proceed!',d:'→ Close the deal!',c:'ob-green',a:'wf_closed'},
-      {i:'💬',l:'Asking about RM349/month',d:'→ Explain what\'s included',c:'ob-yellow',a:'wf_explain349'},
-      {i:'🏠',l:'Asking about domain/hosting',d:'→ Explain domain & hosting',c:'ob-blue',a:'wf_explaindomain'},
-      {i:'🤑',l:'Price is too high — negotiating',d:'→ Offer RM2,499 final price',c:'ob-orange',a:'wf_negotiate'},
-      {i:'📵',l:'No response — send follow-up',d:'→ Follow up message',c:'ob-gray',a:'wf_pricenoresponse'},
-      {i:'❌',l:'Rejected',d:'They said no',c:'ob-red',a:'wf_rejected'},
-    ];
-  }else{
-    outs=[
-      {i:'🔄',l:'Interested again!',d:'→ Loop back to interested',c:'ob-green',a:'wf_interested'},
-      {i:'✅',l:'Deal Closed!',d:'→ Mark as Closed Won',c:'ob-purple',a:'wf_closed'},
-      {i:'❌',l:'Rejected',d:'→ Mark as rejected',c:'ob-red',a:'wf_rejected'},
-      {i:'📨',l:'Send Final Message',d:'→ Last message before closing',c:'ob-gray',a:'wf_finalmessage'},
-    ];
-  }
-
-  document.getElementById('wf-content').innerHTML=outs.map(o=>
-    `<button class="out-btn ${o.c}" onclick="wfAction('${o.a}')">
-      <div class="out-icon">${o.i}</div>
-      <div class="out-lbl">${o.l}</div>
-      <div class="out-desc">${o.d}</div>
-    </button>`).join('')+'<div style="height:12px"></div>';
-  openSh('wf-bd','wf-sheet');
-}
-function closeWorkflow(){closeSh('wf-bd','wf-sheet');}
-
-function wfAction(a){
-  const b=getBiz(currentId);if(!b)return;
-  closeWorkflow();
-  const actions={
-    wf_interested:()=>{setStatus('interested');setTimeout(()=>{curSit='sendDemo';openSheet();},400);showToast('🎯 Interested! Sending demo template…');},
-    wf_maybe:()=>{setStatus('maybe');setTimeout(()=>{curSit='maybeDoubleCheck';openSheet();},400);showToast('🌐 Marked Maybe — double check template');},
-    wf_askingboss:()=>{setStatus('askingboss');setTimeout(()=>{curSit='askBoss';openSheet();},400);showToast('🙋 Asking Boss — template ready');},
-    wf_seenprice:()=>{setStatus('seenprice');setTimeout(()=>{curSit='price';openSheet();},400);showToast('💰 Seen Price — pricing template ready');},
-    wf_rejected:()=>{setStatus('rejected');showToast('❌ Marked Rejected');},
-    wf_closed:()=>{setStatus('closed');setTimeout(()=>{curSit='closed';openSheet();},400);showToast('🎉 Deal Closed! Congrats Isaac!');},
-    wf_noresponse:()=>{b.timeline=b.timeline||[];b.timeline.push({ts:Date.now(),text:'Call — no answer'});saveData();renderDetail();showToast('📵 Logged — try again later');},
-    wf_nochange:()=>{showToast('🔄 No change logged');},
-    wf_bossnowebsite:()=>{setStatus('interested');setTimeout(()=>{curSit='sendDemo';openSheet();},400);showToast("✅ Boss has no website — sending demo!");},
-    wf_bosshasswebsite:()=>{setStatus('maybeinfuture');setTimeout(()=>{curSit='maybeHasWebsite';openSheet();},400);showToast('🌐 Has website — Maybe Future template');},
-    wf_bossnoresponse:()=>{
-      const next=b.status==='askingboss'?'2interested':b.status;
-      setStatus(next);setTimeout(()=>{curSit='maybeNoResp';openSheet();},400);showToast('📞 No response — follow-up template');
-    },
-    wf_pricenoresponse:()=>{
-      const map={'seenprice':'2seenprice','2seenprice':'3seenprice','3seenprice':'finalmessage'};
-      const next=map[b.status]||b.status;
-      setStatus(next);
-      const tmap={'2seenprice':'fu2seenprice','3seenprice':'raya','finalmessage':'finalMsg'};
-      if(tmap[next])setTimeout(()=>{curSit=tmap[next];openSheet();},400);
-      showToast('📨 Follow-up template ready');
-    },
-    wf_explain349:()=>{curSit='rm349';setTimeout(()=>openSheet(),300);showToast('RM349 explanation template');},
-    wf_explaindomain:()=>{curSit='domain';setTimeout(()=>openSheet(),300);showToast('Domain & hosting template');},
-    wf_negotiate:()=>{curSit='negotiate';setTimeout(()=>openSheet(),300);showToast('💬 Negotiation template');},
-    wf_finalmessage:()=>{setStatus('finalmessage');setTimeout(()=>{curSit='finalMsg';openSheet();},400);showToast('📨 Final message template');},
-  };
-  if(actions[a])actions[a]();
-}
-
-// ─── TEMPLATE SHEET ───────────────────────────────────────────────────────────
-function openSheet(){
-  const b=getBiz(currentId);
-  if(b){
-    document.getElementById('tmpl-ctx').textContent=b.name+' — tap to copy';
-    if(!curSit){const m=STMPL[b.status];curSit=m?m[0]:Object.keys(T)[0];}
-  }
-  renderSheet();openSh('tmpl-bd','tmpl-sheet');
-}
-function closeSheet(){closeSh('tmpl-bd','tmpl-sheet');}
-function renderSheet(){
-  const b=getBiz(currentId);const name=b?b.name:'[Business Name]';
-  const sugs=b?(STMPL[b.status]||Object.keys(T)):Object.keys(T);
-  document.getElementById('sit-tabs').innerHTML=sugs.map(k=>
-    `<div class="sit-tab${curSit===k?' active':''}" onclick="setSit('${k}')">${T[k]?T[k].label:k}</div>`).join('');
-  const t=T[curSit]||T[Object.keys(T)[0]];
-  document.getElementById('tmpl-body').innerHTML=`
-    <div class="tmpl-block">
-      <div class="tmpl-lang lang-en">EN</div>
-      <div class="tmpl-msg" onclick="copyTmpl(this,'en','${curSit}')">${esc(fill(t.en,name))}</div>
-    </div>
-    <div class="tmpl-block">
-      <div class="tmpl-lang lang-bm">BM</div>
-      <div class="tmpl-msg" onclick="copyTmpl(this,'bm','${curSit}')">${esc(fill(t.bm,name))}</div>
-    </div>`;
-}
-function setSit(k){curSit=k;renderSheet();}
-function copyTmpl(el,lang,key){
-  const b=getBiz(currentId);const name=b?b.name:'[Business Name]';
-  const t=T[key];if(!t)return;
-  const txt=fill(lang==='en'?t.en:t.bm,name);
-  const doCopy=()=>{
-    showToast('Copied! Paste into WhatsApp 💬');
-    el.style.borderColor='#22c55e';setTimeout(()=>{el.style.borderColor='';},900);
-    if(b){b.timeline=b.timeline||[];b.timeline.push({ts:Date.now(),text:'Template copied: '+t.label+' ('+lang.toUpperCase()+')'});saveData();}
-  };
-  if(navigator.clipboard)navigator.clipboard.writeText(txt).then(doCopy).catch(()=>{fallbackCopy(txt);doCopy();});
-  else{fallbackCopy(txt);doCopy();}
-}
-function fallbackCopy(txt){const ta=document.createElement('textarea');ta.value=txt;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}
-
-// ─── PRICING ──────────────────────────────────────────────────────────────────
-function openPricing(){openSh('price-bd','price-sheet');}
-function closePricing(){closeSh('price-bd','price-sheet');}
-function copyPriceEN(){
-  const b=getBiz(currentId);const name=b?b.name:'your clinic';
-  const txt=`Okay so this is the price for the website, right now we are doing a Ramadan promo!\n\nOne-time setup fee of RM 2,799 to get your professional website live, then just RM 349/month to keep everything running.\n\nTo put it simply, your monthly fee costs less than one patient appointment. Your website pays for itself with just one extra booking.\n\nAlso, just for your peace of mind, if you're not satisfied with the website, I offer a full refund immediately with no strings attached 👍`;
-  if(navigator.clipboard)navigator.clipboard.writeText(txt).then(()=>showToast('EN price message copied!')).catch(()=>{fallbackCopy(txt);showToast('Copied!');});
-  else{fallbackCopy(txt);showToast('Copied!');}
-}
-function copyPriceBM(){
-  const txt=`So sekarang kami ada promo khas Ramadan!\n\nSetup sekali sahaja RM2,799 untuk lancarkan website profesional, lepas tu RM349/bulan je untuk urus semuanya.\n\nKos bulanan ni kurang dari nilai satu temujanji pesakit, jadi website boleh "cover" kos dengan hanya satu booking tambahan 👍\n\nSelain itu, demi ketenangan minda anda, jika anda tidak berpuas hati dengan laman web ini, saya menawarkan pemulangan wang penuh serta-merta tanpa sebarang syarat 👍`;
-  if(navigator.clipboard)navigator.clipboard.writeText(txt).then(()=>showToast('BM price message copied!')).catch(()=>{fallbackCopy(txt);showToast('Copied!');});
-  else{fallbackCopy(txt);showToast('Copied!');}
-}
-
-// ─── AI CHATBOX ───────────────────────────────────────────────────────────────
-let chatHistory=[];
-function openChat(){
-  document.getElementById('chat-ov').classList.remove('hidden');
-  const msgs=document.getElementById('chat-msgs');
-  if(!msgs.children.length){
-    addAIMsg(`Hi Isaac! 👋 I'm your CRM assistant. Here's what I can do:\n\n🔍 Find: "find klinik ivory"\n📊 Stats: "show my stats"\n📅 Due: "show due today" or "show overdue"\n📋 Status: "show all interested"\n💰 Pipeline: "show pipeline"\n\nWhat do you need?`);
-  }
-  renderSuggestions();
-}
-function closeChat(){document.getElementById('chat-ov').classList.add('hidden');}
-function addUserMsg(txt){
-  const div=document.createElement('div');div.className='cmsg cmsg-u';div.textContent=txt;
-  document.getElementById('chat-msgs').appendChild(div);scrollChat();
-}
-function addAIMsg(txt){
-  const div=document.createElement('div');div.className='cmsg cmsg-a';div.innerHTML=txt.replace(/\n/g,'<br>');
-  document.getElementById('chat-msgs').appendChild(div);scrollChat();
-}
-function addTyping(){
-  const div=document.createElement('div');div.className='cmsg cmsg-a typing-msg';
-  div.innerHTML='<div class="typing"><span class="tdot"></span><span class="tdot"></span><span class="tdot"></span></div>';
-  document.getElementById('chat-msgs').appendChild(div);scrollChat();return div;
-}
-function scrollChat(){const m=document.getElementById('chat-msgs');m.scrollTop=m.scrollHeight;}
-function renderSuggestions(){
-  const sugs=['📊 My stats','📅 Due today','🔴 Overdue','💰 Pipeline','👀 All interested'];
-  document.getElementById('chat-sugs').innerHTML=sugs.map(s=>`<div class="sug-chip" onclick="useSug('${s}')">${s}</div>`).join('');
-}
-function useSug(s){document.getElementById('chat-inp').value=s.replace(/^[^\s]+\s/,'');sendChat();}
-
-function sendChat(){
-  const inp=document.getElementById('chat-inp');
-  const msg=inp.value.trim();if(!msg)return;
-  inp.value='';addUserMsg(msg);
-  const typing=addTyping();
-  setTimeout(()=>{
-    typing.remove();
-    const reply=processAICmd(msg.toLowerCase());
-    addAIMsg(reply);
-  },600);
-}
-
-function processAICmd(q){
-  // FIND
-  if(q.includes('find')||q.includes('search')||q.includes('look')){
-    const terms=q.replace(/find|search|look|for|up|me|the|business/gi,'').trim();
-    if(!terms)return'What business are you looking for? Type the name.';
-    const results=businesses.filter(b=>b.name.toLowerCase().includes(terms));
-    if(!results.length)return`❌ No business found matching "${terms}"`;
-    return`Found ${results.length} result${results.length>1?'s':''}:\n\n`+results.slice(0,5).map(b=>{
-      const st=getSt(b.status);return`• <b style="color:#fff">${esc(b.name)}</b> — ${st.label}${b.dueDate?'\n  📅 '+fmtDue(b.dueDate):''}`;
-    }).join('\n\n')+'\n\n<i style="color:var(--muted)">Tap a business on the home screen to open it.</i>';
-  }
-  // STATS
-  if(q.includes('stat')||q.includes('how many')||q.includes('count')){
-    const counts={};STATUSES.forEach(s=>{counts[s.key]=businesses.filter(b=>b.status===s.key).length;});
-    const pl=businesses.filter(b=>!['new','rejected','closed','finalmessage','maybeinfuture'].includes(b.status));
-    return`📊 <b>Your Stats</b>\n\nTotal: ${businesses.length}\nClosed Won: ${counts.closed||0} 🎉\nPipeline: RM${(pl.length*2799).toLocaleString()}\nRejected: ${counts.rejected||0}\n\nBreakdown:\n${STATUSES.filter(s=>counts[s.key]>0).map(s=>`• ${s.label}: ${counts[s.key]}`).join('\n')}`;
-  }
-  // PIPELINE
-  if(q.includes('pipeline')||q.includes('value')||q.includes('revenue')){
-    const pl=businesses.filter(b=>!['new','rejected','closed','finalmessage','maybeinfuture'].includes(b.status));
-    return`💰 <b>Pipeline</b>\n\n${pl.length} deals in progress\nEstimated value: RM${(pl.length*2799).toLocaleString()}\n\nTop deals:\n${pl.slice(0,5).map(b=>`• ${esc(b.name)} (${getSt(b.status).label})`).join('\n')}`;
-  }
-  // OVERDUE
-  if(q.includes('overdue')){
-    const list=businesses.filter(b=>getDueState(b)==='overdue');
-    if(!list.length)return'✅ No overdue follow-ups! Great work!';
-    return`🔴 <b>Overdue (${list.length})</b>\n\n`+list.map(b=>`• <b style="color:#f87171">${esc(b.name)}</b>\n  ${getSt(b.status).label} — ${fmtDue(b.dueDate)}`).join('\n\n');
-  }
-  // DUE TODAY
-  if(q.includes('due today')||q.includes('today')){
-    const list=businesses.filter(b=>getDueState(b)==='today'||getDueState(b)==='overdue');
-    if(!list.length)return'✅ Nothing due today! You\'re on top of things!';
-    return`📅 <b>Due Today (${list.length})</b>\n\n`+list.map(b=>`• <b style="color:#fb923c">${esc(b.name)}</b>\n  ${getSt(b.status).label} — ${fmtDue(b.dueDate)}`).join('\n\n');
-  }
-  // SHOW STATUS
-  const stMatch=STATUSES.find(s=>q.includes(s.label.toLowerCase())||q.includes(s.key.toLowerCase()));
-  if(stMatch&&(q.includes('show')||q.includes('list')||q.includes('all'))){
-    const list=businesses.filter(b=>b.status===stMatch.key);
-    if(!list.length)return`No businesses with status "${stMatch.label}"`;
-    return`<b>${stMatch.label} (${list.length})</b>\n\n`+list.map(b=>`• ${esc(b.name)}${b.dueDate?'\n  📅 '+fmtDue(b.dueDate):''}`).join('\n\n');
-  }
-  // TOTAL CALLS TODAY
-  if(q.includes('call')){
-    const k=todayKey();const n=callTracker[k]||0;
-    return`📞 You've logged <b>${n} call${n!==1?'s':''}</b> today.\n\nThis week: ${Object.keys(callTracker).filter(k2=>{const d=new Date(k2);const now=new Date();return now-d<7*DAY;}).reduce((a,k2)=>a+callTracker[k2],0)} calls total.`;
-  }
-  // HELP
-  if(q.includes('help')||q.includes('what can')){
-    return`Here's what I can do:\n\n🔍 <b>Find business:</b> "find klinik abc"\n📊 <b>Stats:</b> "show my stats"\n📅 <b>Due today:</b> "show due today"\n🔴 <b>Overdue:</b> "show overdue"\n📋 <b>By status:</b> "show all interested"\n💰 <b>Pipeline:</b> "show pipeline"\n📞 <b>Calls:</b> "how many calls today"`;
-  }
-  return`I didn't quite understand that. Try:\n• "find klinik ivory"\n• "show due today"\n• "show all interested"\n• "show my stats"\n\nType "help" for all commands!`;
-}
-
-// ─── MODAL ────────────────────────────────────────────────────────────────────
-let _modalCb=null;
-function showModal(title,msg,cb){
-  document.getElementById('modal-title').textContent=title;
-  document.getElementById('modal-msg').textContent=msg;
-  _modalCb=cb;document.getElementById('modal-bg').classList.add('open');
-  document.getElementById('modal-ok').onclick=()=>{closeModal();if(_modalCb)_modalCb();};
-}
-function closeModal(){document.getElementById('modal-bg').classList.remove('open');}
-
-// ─── INIT ─────────────────────────────────────────────────────────────────────
-loadLocal();renderHome();renderTracker();
-</script>
-</body>
-</html>
+.sdot.error{bac
